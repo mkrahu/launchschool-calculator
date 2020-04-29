@@ -16,7 +16,9 @@ def prompt(message)
 end
 
 def valid_number?(num)
-  Integer(num) rescue nil
+  Integer(num)
+rescue
+  nil
 end
 
 def valid_operation?(operation)
