@@ -1,0 +1,26 @@
+---
+  welcome: 'Welcome to the calculator!'
+  op1:
+    operation: 'add'
+    verb: 'adding'
+  op2:
+    operation: 'subtract'
+    verb: 'subtracting'
+  op3:
+    operation: 'multipy'
+    verb: 'multipying'
+  op4:
+    operation: 'divide'
+    verb: 'dividing'
+  op5:
+    operation: 'modulus'
+    verb: 'modulizing'
+  number1_prompt: "What's the first number?"
+  number2_prompt: "What's the second number?"
+  number_error: 'Please provide a valid number...'
+  operations: 'What operation would you like to perform?'
+  operations_error: 'Please select'
+  result: 'The result is:'
+  another_calc: 'Do you want to make another calculation? (Y to continue)'
+  and: 'and'
+  goodbye: 'Thanks for using the calculator, good bye!'

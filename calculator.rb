@@ -1,15 +1,22 @@
-OPERATIONS = { '1' => { operation: 'add',
+require 'yaml'
+
+MESSAGES = YAML.load_file("config.yml")
+
+OPERATIONS = { '1' => { operation: MESSAGES['op1']['operation'],
                         method:    proc { |a, b| a + b },
-                        verb:      'adding' },
-               '2' => { operation: 'subtract',
+                        verb:      MESSAGES['op1']['verb'] },
+               '2' => { operation: MESSAGES['op2']['operation'],
                         method:    proc { |a, b| a - b },
-                        verb:      'subtracting' },
-               '3' => { operation: 'multiply',
+                        verb:      MESSAGES['op2']['verb'] },
+               '3' => { operation: MESSAGES['op3']['operation'],
                         method:    proc { |a, b| a * b },
-                        verb:      'multiplying' },
-               '4' => { operation: 'divide',
+                        verb:      MESSAGES['op3']['verb'] },
+               '4' => { operation: MESSAGES['op4']['operation'],
                         method:    proc { |a, b| a / b.to_f },
-                        verb:      'dividing' } }.freeze
+                        verb:      MESSAGES['op4']['verb'] },
+               '5' => { operation: MESSAGES['op5']['operation'],
+                       method:    proc { |a, b| a % b.to_f },
+                       verb:      MESSAGES['op5']['verb'] } }.freeze
 
 def prompt(message)
   puts ">> #{message}"
@@ -17,51 +24,70 @@ end
 
 def valid_number?(num)
   Integer(num)
-rescue
+rescue ArgumentError
   nil
+end
+
+def numeric?(num)
+  !Float(num).nil?
+rescue ArgumentError
+  false
+end
+
+def float?(num)
+  num == num.to_f.to_s
+end
+
+def integer?(num)
+  num == num.to_i.to_s
 end
 
 def valid_operation?(operation)
   OPERATIONS.keys.include? operation
 end
 
-prompt 'Welcome to the calculator!'
+prompt(MESSAGES['welcome'])
 loop do
   number1 = ''
-  prompt "What's the first number?"
+  prompt(MESSAGES['number1_prompt'])
   loop do
     number1 = gets.chomp
 
-    break if valid_number?(number1)
-    prompt('Please provide a valid number...')
+    break if numeric?(number1)
+    prompt(MESSAGES['number_error'])
   end
-  number1 = number1.to_i
+
+  number1 = number1.to_f if float?(number1)
+  number1 = number1.to_i if integer?(number1)
 
   number2 = ''
-  prompt "What's the second number?"
+  prompt(MESSAGES['number2_prompt'])
   loop do
     number2 = gets.chomp
 
-    break if valid_number?(number2)
-    prompt('Please provide a valid number...')
+    break if numeric?(number2)
+    prompt(MESSAGES['number_error'])
   end
-  number2 = number2.to_i
+  number2 = number2.to_f if float?(number2)
+  number2 = number2.to_i if integer?(number2)
 
-  prompt 'What operation would you like to perform?'
+  prompt(MESSAGES['operations'])
   OPERATIONS.each { |num, hash| puts "   #{num}) #{hash[:operation]}" }
   operation = ''
   loop do
     operation = gets.chomp
     break if valid_operation?(operation)
-    prompt "Please select #{OPERATIONS.keys.join(', ')}"
+    prompt "#{MESSAGES[operations_error]} #{OPERATIONS.keys.join(', ')}"
   end
 
   result = OPERATIONS[operation][:method].call(number1, number2)
 
-  prompt "#{OPERATIONS[operation][:verb].capitalize} #{number1} and #{number2}."
-  prompt "The result is: #{result}"
-  prompt 'Do you want to make another calculation? (Y to continue)'
+  prompt "#{OPERATIONS[operation][:verb].capitalize} #{number1} " \
+         "#{MESSAGES['and']} #{number2}."
+  prompt "#{MESSAGES['result']} #{result}"
+  prompt(MESSAGES['another_calc'])
   answer = gets.chomp
   break unless answer.downcase.start_with? 'y'
 end
-prompt 'Thanks for using the calculator, good bye!'
+
+prompt(MESSAGES['goodbye'])
